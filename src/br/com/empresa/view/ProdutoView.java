@@ -20,20 +20,22 @@ import br.com.empresa.exception.BOException;
 import br.com.empresa.exception.BOValidationException;
 import br.com.empresa.service.IServicoBeanLocal;
 import br.com.empresa.service.ServicoBeanLocal;
+import br.com.empresa.view.util.MascaraJFormattedTextField;
 import br.com.empresa.vo.ProdutoVO;
 import br.com.empresa.vo.enums.StatusEnum;
 import br.com.empresa.vo.enums.TipoPessoaEnum;
+
+import javax.swing.JFormattedTextField;
 
 public class ProdutoView extends JDialog {
 
 	private JTextField tfCodigo;
 	private JTextField tfDescricao;
-	private JTextField tfCdBarras;
-	private JTextField tfQtdEstoque;
-	private JTextField tfVlrCompra;
-	private JTextField tfVlrVenda;
+	private JFormattedTextField tfCdBarras;
 	private JComboBox cbStatus;
-	
+	private JFormattedTextField tftVlrVenda;
+	private JFormattedTextField tftVlrCompra;
+	private JFormattedTextField ftfQtdEstoque;
 	private ProdutoVO produtoVO;
 
 	private IServicoBeanLocal servicoBeanLocal;
@@ -55,7 +57,7 @@ public class ProdutoView extends JDialog {
 
 		servicoBeanLocal = new ServicoBeanLocal();
 		produtoVO = new ProdutoVO();
-		
+
 		setBounds(100, 100, 450, 330);
 		getContentPane().setLayout(null);
 
@@ -98,25 +100,13 @@ public class ProdutoView extends JDialog {
 		getContentPane().add(tfDescricao);
 		tfDescricao.setColumns(10);
 
-		tfCdBarras = new JTextField();
+		tfCdBarras = new JFormattedTextField();
 		tfCdBarras.setColumns(10);
 		tfCdBarras.setBounds(96, 85, 158, 20);
 		getContentPane().add(tfCdBarras);
-
-		tfQtdEstoque = new JTextField();
-		tfQtdEstoque.setColumns(10);
-		tfQtdEstoque.setBounds(96, 119, 86, 20);
-		getContentPane().add(tfQtdEstoque);
-
-		tfVlrCompra = new JTextField();
-		tfVlrCompra.setColumns(10);
-		tfVlrCompra.setBounds(96, 153, 110, 20);
-		getContentPane().add(tfVlrCompra);
-
-		tfVlrVenda = new JTextField();
-		tfVlrVenda.setColumns(10);
-		tfVlrVenda.setBounds(96, 187, 110, 20);
-		getContentPane().add(tfVlrVenda);
+		
+		String formatCdBarras = "####################";
+		MascaraJFormattedTextField.formatField(formatCdBarras, tfCdBarras);
 
 		cbStatus = new JComboBox();
 		cbStatus.addActionListener(new ActionListener() {
@@ -151,10 +141,30 @@ public class ProdutoView extends JDialog {
 		separator.setBounds(10, 249, 414, 2);
 		getContentPane().add(separator);
 
+		tftVlrVenda = new JFormattedTextField();
+		tftVlrVenda.setBounds(96, 187, 110, 20);
+		getContentPane().add(tftVlrVenda);
+
+		MascaraJFormattedTextField.formatNumericField(tftVlrVenda);
+	
+
+		tftVlrCompra = new JFormattedTextField();
+		tftVlrCompra.setBounds(96, 153, 110, 20);
+		getContentPane().add(tftVlrCompra);
+
+		MascaraJFormattedTextField.formatNumericField(tftVlrCompra);
+
+		ftfQtdEstoque = new JFormattedTextField();
+		ftfQtdEstoque.setBounds(96, 119, 86, 20);
+		getContentPane().add(ftfQtdEstoque);
+		
+		String formatEstoque = "######,###";
+		MascaraJFormattedTextField.formatField(formatEstoque, ftfQtdEstoque);
+
+
 		// Coloca a janela no centro da tela.
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-			
 
 	}
 
@@ -164,18 +174,33 @@ public class ProdutoView extends JDialog {
 	}
 
 	private void salvar() {
-		
-		
-		
+
 		StatusEnum se = (StatusEnum) cbStatus.getSelectedItem();
-		produtoVO.setStatus(se.name()); 
+		produtoVO.setStatus(se.name());
 		produtoVO.setDescri(tfDescricao.getText());
 		produtoVO.setCodbar(tfCdBarras.getText());
-		produtoVO.setQtdest(tfQtdEstoque.getText());
-		produtoVO.setValcom(vlrCompra.getText());
-		produtoVO.setValven(tfVlrVenda.getText());
+
+		String qtd = ftfQtdEstoque.getText().trim(); // Captura o valor do campo e o coloca em uma string.
+		qtd = qtd.replaceAll("\\.", "").replaceAll(",", "."); // Substitui a pontuação padrão por uma válida ao java.
+		if (qtd.length() > 1) {
+			BigDecimal qtdEstoque = new BigDecimal(qtd); // Atribui através do construtor.produtoVO.
+			produtoVO.setQtdest(qtdEstoque);
+		}
 		
-				
+		String vlrcom = tftVlrCompra.getText().trim(); // Captura o valor do campo e o coloca em uma string.
+		vlrcom = vlrcom.replaceAll("\\.", "").replaceAll(",", "."); // Substitui a pontuação padrão por uma válida ao
+		if (vlrcom.length() > 1) {
+			BigDecimal vlrCompra = new BigDecimal(vlrcom); // Atribui através do construtor.produtoVO.
+			produtoVO.setValcom(vlrCompra);
+		}
+		
+		String venda = tftVlrVenda.getText().trim(); // Captura o valor do campo e o coloca em uma string.
+		venda = venda.replaceAll("\\.", "").replaceAll(",", "."); // Substitui a pontuação padrão por uma válida ao
+		if (venda.length() > 1) {
+			BigDecimal vlrVenda = new BigDecimal(venda); // Atribui através do construtor.produtoVO.
+			produtoVO.setValven(vlrVenda);
+		}
+
 		produtoVO.setClient(Dados.getClienteSelecionado());
 
 		StatusEnum statusEnum = (StatusEnum) cbStatus.getSelectedItem();
@@ -205,13 +230,16 @@ public class ProdutoView extends JDialog {
 	public void editar(ProdutoVO produto) {
 
 		this.produtoVO = produto;
-		this.tfDescricao.setText(produto.getId().toString());
-		this.cbStatus.setSelectedItem(TipoPessoaEnum.valueOf(produto.getStatus()));
-		this.tfCdBarras.setText(produto.getCodbar());
-		this.tfQtdEstoque.setText(produto.getDescri());
+		this.tfCodigo.setText(produto.getId().toString());
+		this.tfDescricao.setText(produto.getDescri());
+		this.cbStatus.setSelectedItem(StatusEnum.valueOf(produto.getStatus()));
+		this.tfCdBarras.setText(produto.getCodBar());
+		this.ftfQtdEstoque.setText(produto.getQtdEst().toPlainString());
+		this.tftVlrCompra.setText(produto.getValCom().toPlainString());
+		this.tftVlrVenda.setText(produto.getValVen().toPlainString());
 
 	}
-	
+
 	private void alterarStatus() {
 		StatusEnum statusEnum = (StatusEnum) cbStatus.getSelectedItem();
 

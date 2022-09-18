@@ -1,6 +1,5 @@
 package br.com.empresa.bo;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,7 @@ public class ProdutoBO implements IProdutoBO {
 
 			if (status.equals("A")) {
 
-				throw new BOValidationException("CPF: erro de validação. " + "O Status informado está incorreto.");
+				throw new BOValidationException("Status: erro de validação. " + "O Status informado está incorreto.");
 			}
 		}
 
@@ -63,13 +62,20 @@ public class ProdutoBO implements IProdutoBO {
 
 		if (produto == null) {
 			throw new BOException("Não é possível salvar o produto pois o objeto é nulo.");
-		} else if (produto.getDescri() == null || produto.getDescri().trim().length() == 0) {
-			throw new BOValidationException("Nome: erro de validação. " + "O nome deve ser preenchido.");
-
-		} else if (produto.getCodbar() == null) {
+		} else if (produto.getDescri().toUpperCase() == null || produto.getDescri().trim().length() == 0) {
+			throw new BOValidationException("Descrição: erro de validação. " + "A descrição do produto deve ser preenchida.");
+		} else if (produto.getCodBar() == null) {
 			throw new BOValidationException(
 					"Código de barras: erro de validação. " + "O Codigo de barras deve ser preenchido.");
-
+		} else if (produto.getValCom() == null ) {
+			throw new BOValidationException(
+					"Valor de compra: erro de validação. " + "O valor de compra deve ser preenchido.");
+		} else if (produto.getValVen() == null ) {
+			throw new BOValidationException(
+					"Valor de venda: erro de validação. " + "O valor de venda deve ser preenchido.");
+		} else if (produto.getQtdEst() == null ) {
+			throw new BOValidationException(
+					"Quantidade em estoque: erro de validação. " + "O valor de quantidade em estoque deve ser preenchido.");
 		} else if (produto.getStatus() == null) {
 			throw new BOException("Ocorreu um erro ao salvar o campo status." + " O valor deveria ter sido informado.");
 

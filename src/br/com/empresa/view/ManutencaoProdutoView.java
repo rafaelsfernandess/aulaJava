@@ -106,7 +106,7 @@ public class ManutencaoProdutoView extends JDialog {
 				pesquisar();
 			}
 		});
-		btnPesquisar.setBounds(505, 86, 89, 23);
+		btnPesquisar.setBounds(552, 86, 102, 23);
 		panel.add(btnPesquisar);
 
 		JButton btnLimpar = new JButton("Limpar");
@@ -115,7 +115,7 @@ public class ManutencaoProdutoView extends JDialog {
 				limpar();
 			}
 		});
-		btnLimpar.setBounds(406, 86, 89, 23);
+		btnLimpar.setBounds(453, 86, 89, 23);
 		panel.add(btnLimpar);
 
 		tfCdBarras = new JTextField();
@@ -246,24 +246,24 @@ public class ManutencaoProdutoView extends JDialog {
 			if(idProd != null && idProd.trim().length()>0) {
 				idProdBI = new BigInteger(idProd);
 			}
-			
+						
 			DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
 			DecimalFormat decimalFormatQtd = new DecimalFormat("###,###.000");
 						
 			
 			List<ProdutoVO> produto = serviceBeanLocal.listarProduto(idProdBI, tfDescricao.getText(), statusProduto,
-					tfCodigo.getText(), Dados.getClienteSelecionado());			
+					 tfCdBarras.getText(), Dados.getClienteSelecionado());			
 			
 			for (ProdutoVO produtoVO : produto) {
 
 				RowData rowData = new RowData();
 				rowData.getValues().put(0, produtoVO.getId().toString());
 				rowData.getValues().put(1, produtoVO.getDescri());
-				rowData.getValues().put(2, produtoVO.getQtdest());
+				rowData.getValues().put(2, decimalFormatQtd.format(produtoVO.getQtdEst()));
 				rowData.getValues().put(3, produtoVO.getStatus());
-				rowData.getValues().put(4, produtoVO.getValcom());
-				rowData.getValues().put(5, produtoVO.getValven());
-				rowData.getValues().put(6, produtoVO.getCodbar());
+				rowData.getValues().put(4, decimalFormat.format(produtoVO.getValCom()));
+				rowData.getValues().put(5, decimalFormat.format(produtoVO.getValVen()));
+				rowData.getValues().put(6, produtoVO.getCodBar());
 				rowData.setElement(produtoVO);
 				tableModel.addRow(rowData);
 			}

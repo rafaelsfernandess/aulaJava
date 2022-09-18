@@ -50,7 +50,7 @@ public class ProdutoDAO implements IProdutoDAO {
 			}
 
 			if (codbar != null && codbar.trim().length() > 0) {
-				if (produtoVO.getCodbar().contains(codbar) == false) {
+				if (produtoVO.getCodBar().contains(codbar) == false) {
 					continue;
 				}
 			}

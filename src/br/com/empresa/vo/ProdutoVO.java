@@ -63,7 +63,7 @@ public class ProdutoVO implements Serializable {
 		this.status = status;
 	}
 
-	public BigDecimal getQtdest() {
+	public BigDecimal getQtdEst() {
 		return qtdest;
 	}
 
@@ -80,7 +80,7 @@ public class ProdutoVO implements Serializable {
 		this.client = client;
 	}
 	
-	public BigDecimal getValcom() {
+	public BigDecimal getValCom() {
 		return valcom;
 	}
 
@@ -88,7 +88,7 @@ public class ProdutoVO implements Serializable {
 		this.valcom = valcom;
 	}
 
-	public BigDecimal getValven() {
+	public BigDecimal getValVen() {
 		return valven;
 	}
 
@@ -96,7 +96,7 @@ public class ProdutoVO implements Serializable {
 		this.valven = valven;
 	}
 
-	public String getCodbar() {
+	public String getCodBar() {
 		return codbar;
 	}
 
